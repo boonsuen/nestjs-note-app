@@ -6,10 +6,7 @@ export class User {
   id: string;
 
   @Column({ unique: true })
-  email: string;
-
-  @Column({ default: false })
-  isEmailConfirmed: boolean;
+  username: string;
 
   @Column()
   password: string;
