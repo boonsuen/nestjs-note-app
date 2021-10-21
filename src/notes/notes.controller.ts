@@ -1,8 +1,17 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
-import { Note } from './note.model';
+import { Note } from './note.entity';
 import { NotesService } from './notes.service';
 
 @Controller('notes')
@@ -10,16 +19,12 @@ export class NotesController {
   constructor(private notesService: NotesService) {}
 
   @Get()
-  getNotes(@Query() filterDto: GetNotesFilterDto): Note[] {
-    if (Object.keys(filterDto).length) {
-      return this.notesService.getNotesWithFilter(filterDto);
-    } else {
-      return this.notesService.getAllNotes();
-    }
+  getNotes(@Query() filterDto: GetNotesFilterDto): Promise<Note[]> {
+    return this.notesService.getNotes(filterDto);
   }
 
   @Get('/:id')
-  getNoteById(@Param('id') id: string): Note {
+  getNoteById(@Param('id') id: string): Promise<Note> {
     return this.notesService.getNoteById(id);
   }
 
@@ -32,12 +37,12 @@ export class NotesController {
   updateNote(
     @Param('id') id: string,
     @Body() updateNoteDto: UpdateNoteDto,
-  ) {
+  ): Promise<Note> {
     return this.notesService.updateNote(id, updateNoteDto);
   }
 
   @Delete('/:id')
-  deleteNote(@Param('id') id: string): void {
+  deleteNote(@Param('id') id: string): Promise<void> {
     return this.notesService.deleteNote(id);
   }
 }

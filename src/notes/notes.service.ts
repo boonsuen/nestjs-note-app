@@ -1,70 +1,50 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Note } from './note.model';
-import { v4 as uuid } from 'uuid';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
+import { NotesRepository } from './notes.repository';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Note } from './note.entity';
 
 @Injectable()
 export class NotesService {
-  private notes: Note[] = [];
-
-  getAllNotes(): Note[] {
-    return this.notes;
+  constructor(
+    @InjectRepository(NotesRepository)
+    private notesRepository: NotesRepository
+  ) {}
+  
+  getNotes(filterDto: GetNotesFilterDto): Promise<Note[]> {
+    return this.notesRepository.getNotes(filterDto);
   }
 
-  getNotesWithFilter(filterDto: GetNotesFilterDto): Note[] {
-    const { search } = filterDto;
-
-    let notes = this.getAllNotes();
-    if (search) {
-      notes = notes.filter(note => {
-        if (note.title.includes(search) || note.body.includes(search)) {
-          return true;
-        }
-        return false;
-      });
-    }
-
-    return notes;
-  }
-
-  getNoteById(id: string): Note {
-    const found = this.notes.find((note) => note.id === id);
-
+  async getNoteById(id: string): Promise<Note> {
+    const found = await this.notesRepository.findOne(id);
     if (!found) {
       throw new NotFoundException(`Note with ID '${id}' not found`);
-    } else {
-      return found;
     }
+    return found;
   }
 
-  createNote(createNoteDto: CreateNoteDto): Note {
-    const { title, body } = createNoteDto;
-
-    const note: Note = {
-      id: uuid(),
-      title,
-      body,
-      createdAt: Date.now(),
-      updatedAt: Date.now(),
-    };
-
-    this.notes.push(note);
-    return note;
+  createNote(createNoteDto: CreateNoteDto): Promise<Note> {
+    return this.notesRepository.createNote(createNoteDto);
   }
 
-  updateNote(id: string, updateNoteDto: UpdateNoteDto): Note {
+  async updateNote(id: string, updateNoteDto: UpdateNoteDto): Promise<Note> {
     const { title, body } = updateNoteDto;
-    const note: Note = this.getNoteById(id);
+    const note: Note = await this.getNoteById(id);
+
     note.title = title;
     note.body = body;
-    note.updatedAt = Date.now();
+
+    await this.notesRepository.save(note);
+    
     return note;
   }
 
-  deleteNote(id: string): void {
-    const found = this.getNoteById(id);
-    this.notes = this.notes.filter((note) => note.id !== found.id);
+  async deleteNote(id: string): Promise<void> {
+    const result = await this.notesRepository.delete(id);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Note with ID '${id}' not found`);
+    }
   }
 }
