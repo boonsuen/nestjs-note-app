@@ -1,3 +1,4 @@
+import { User } from 'src/auth/user.entity';
 import { EntityRepository, Repository } from 'typeorm';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
@@ -22,12 +23,13 @@ export class NotesRepository extends Repository<Note> {
     return notes;
   }
 
-  async createNote(createNoteDto: CreateNoteDto): Promise<Note> {
+  async createNote(createNoteDto: CreateNoteDto, user: User): Promise<Note> {
     const { title, body } = createNoteDto;
 
     const note = this.create({
       title,
       body,
+      user,
     });
 
     await this.save(note);

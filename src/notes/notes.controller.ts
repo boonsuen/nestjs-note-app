@@ -10,6 +10,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from 'src/auth/get-user.decorator';
+import { User } from 'src/auth/user.entity';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
@@ -32,8 +34,11 @@ export class NotesController {
   }
 
   @Post()
-  createNote(@Body() createNoteDto: CreateNoteDto) {
-    return this.notesService.createNote(createNoteDto);
+  createNote(
+    @Body() createNoteDto: CreateNoteDto,
+    @GetUser() user: User
+  ) {
+    return this.notesService.createNote(createNoteDto, user);
   }
 
   @Patch('/:id')

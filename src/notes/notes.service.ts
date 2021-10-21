@@ -5,6 +5,7 @@ import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
 import { NotesRepository } from './notes.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Note } from './note.entity';
+import { User } from 'src/auth/user.entity';
 
 @Injectable()
 export class NotesService {
@@ -25,8 +26,8 @@ export class NotesService {
     return found;
   }
 
-  createNote(createNoteDto: CreateNoteDto): Promise<Note> {
-    return this.notesRepository.createNote(createNoteDto);
+  createNote(createNoteDto: CreateNoteDto, user: User): Promise<Note> {
+    return this.notesRepository.createNote(createNoteDto, user);
   }
 
   async updateNote(id: string, updateNoteDto: UpdateNoteDto): Promise<Note> {
