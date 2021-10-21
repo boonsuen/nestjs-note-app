@@ -1,5 +1,9 @@
+import { IsNotEmpty } from 'class-validator';
+
 export class UpdateNoteDto {
-  id: string;
+  @IsNotEmpty()
   title: string;
+
+  @IsNotEmpty()
   body: string;
 }

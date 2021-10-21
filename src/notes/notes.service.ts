@@ -54,8 +54,8 @@ export class NotesService {
     return note;
   }
 
-  updateNote(updateNoteDto: UpdateNoteDto): Note {
-    const { id, title, body } = updateNoteDto;
+  updateNote(id: string, updateNoteDto: UpdateNoteDto): Note {
+    const { title, body } = updateNoteDto;
     const note: Note = this.getNoteById(id);
     note.title = title;
     note.body = body;

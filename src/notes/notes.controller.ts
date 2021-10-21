@@ -31,14 +31,9 @@ export class NotesController {
   @Patch('/:id')
   updateNote(
     @Param('id') id: string,
-    @Body()
-    body: {
-      title: string;
-      body: string;
-    },
+    @Body() updateNoteDto: UpdateNoteDto,
   ) {
-    const updateNoteDto: UpdateNoteDto = { id, ...body };
-    return this.notesService.updateNote(updateNoteDto);
+    return this.notesService.updateNote(id, updateNoteDto);
   }
 
   @Delete('/:id')
