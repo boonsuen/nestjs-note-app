@@ -14,8 +14,8 @@ export class NotesService {
     private notesRepository: NotesRepository
   ) {}
   
-  getNotes(filterDto: GetNotesFilterDto): Promise<Note[]> {
-    return this.notesRepository.getNotes(filterDto);
+  getNotes(filterDto: GetNotesFilterDto, user: User): Promise<Note[]> {
+    return this.notesRepository.getNotes(filterDto, user);
   }
 
   async getNoteById(id: string): Promise<Note> {

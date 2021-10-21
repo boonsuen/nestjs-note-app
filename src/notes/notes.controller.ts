@@ -24,8 +24,11 @@ export class NotesController {
   constructor(private notesService: NotesService) {}
 
   @Get()
-  getNotes(@Query() filterDto: GetNotesFilterDto): Promise<Note[]> {
-    return this.notesService.getNotes(filterDto);
+  getNotes(
+    @Query() filterDto: GetNotesFilterDto,
+    @GetUser() user: User,
+  ): Promise<Note[]> {
+    return this.notesService.getNotes(filterDto, user);
   }
 
   @Get('/:id')
