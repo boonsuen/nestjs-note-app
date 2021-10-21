@@ -11,15 +11,17 @@ import { User } from 'src/auth/user.entity';
 export class NotesService {
   constructor(
     @InjectRepository(NotesRepository)
-    private notesRepository: NotesRepository
+    private notesRepository: NotesRepository,
   ) {}
-  
+
   getNotes(filterDto: GetNotesFilterDto, user: User): Promise<Note[]> {
     return this.notesRepository.getNotes(filterDto, user);
   }
 
-  async getNoteById(id: string): Promise<Note> {
-    const found = await this.notesRepository.findOne(id);
+  async getNoteById(id: string, user: User): Promise<Note> {
+    const found = await this.notesRepository.findOne({
+      where: { id, user },
+    });
     if (!found) {
       throw new NotFoundException(`Note with ID '${id}' not found`);
     }
@@ -30,20 +32,27 @@ export class NotesService {
     return this.notesRepository.createNote(createNoteDto, user);
   }
 
-  async updateNote(id: string, updateNoteDto: UpdateNoteDto): Promise<Note> {
+  async updateNote(
+    id: string,
+    updateNoteDto: UpdateNoteDto,
+    user: User,
+  ): Promise<Note> {
     const { title, body } = updateNoteDto;
-    const note: Note = await this.getNoteById(id);
+    const note: Note = await this.getNoteById(id, user);
 
     note.title = title;
     note.body = body;
 
     await this.notesRepository.save(note);
-    
+
     return note;
   }
 
-  async deleteNote(id: string): Promise<void> {
-    const result = await this.notesRepository.delete(id);
+  async deleteNote(id: string, user: User): Promise<void> {
+    const result = await this.notesRepository.delete({
+      id,
+      user,
+    });
     if (result.affected === 0) {
       throw new NotFoundException(`Note with ID '${id}' not found`);
     }

@@ -32,8 +32,11 @@ export class NotesController {
   }
 
   @Get('/:id')
-  getNoteById(@Param('id') id: string): Promise<Note> {
-    return this.notesService.getNoteById(id);
+  getNoteById(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<Note> {
+    return this.notesService.getNoteById(id, user);
   }
 
   @Post()
@@ -48,12 +51,16 @@ export class NotesController {
   updateNote(
     @Param('id') id: string,
     @Body() updateNoteDto: UpdateNoteDto,
+    @GetUser() user: User,
   ): Promise<Note> {
-    return this.notesService.updateNote(id, updateNoteDto);
+    return this.notesService.updateNote(id, updateNoteDto, user);
   }
 
   @Delete('/:id')
-  deleteNote(@Param('id') id: string): Promise<void> {
-    return this.notesService.deleteNote(id);
+  deleteNote(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<void> {
+    return this.notesService.deleteNote(id, user);
   }
 }
