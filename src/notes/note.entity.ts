@@ -1,3 +1,4 @@
+import { Exclude } from 'class-transformer';
 import { User } from 'src/auth/user.entity';
 import {
   Column,
@@ -33,5 +34,6 @@ export class Note {
   updated_at: Date;
 
   @ManyToOne((type) => User, (user) => user.notes, { eager: false })
+  @Exclude({ toPlainOnly: true })
   user: User;
 }
