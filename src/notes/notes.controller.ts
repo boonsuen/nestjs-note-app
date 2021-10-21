@@ -7,7 +7,9 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateNoteDto } from './dto/create-note.dto';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
 import { UpdateNoteDto } from './dto/update-note.dto';
@@ -15,6 +17,7 @@ import { Note } from './note.entity';
 import { NotesService } from './notes.service';
 
 @Controller('notes')
+@UseGuards(AuthGuard())
 export class NotesController {
   constructor(private notesService: NotesService) {}
 
