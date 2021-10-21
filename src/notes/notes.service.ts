@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Note } from './note.model';
 import { v4 as uuid } from 'uuid';
 import { CreateNoteDto } from './dto/create-note.dto';
@@ -30,7 +30,13 @@ export class NotesService {
   }
 
   getNoteById(id: string): Note {
-    return this.notes.find((note) => note.id === id);
+    const found = this.notes.find((note) => note.id === id);
+
+    if (!found) {
+      throw new NotFoundException(`Note with ID '${id}' not found`);
+    } else {
+      return found;
+    }
   }
 
   createNote(createNoteDto: CreateNoteDto): Note {
@@ -58,6 +64,7 @@ export class NotesService {
   }
 
   deleteNote(id: string): void {
-    this.notes = this.notes.filter((note) => note.id !== id);
+    const found = this.getNoteById(id);
+    this.notes = this.notes.filter((note) => note.id !== found.id);
   }
 }
