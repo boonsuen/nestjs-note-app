@@ -1,7 +1,9 @@
+import { User } from 'src/auth/user.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -29,4 +31,7 @@ export class Note {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   updated_at: Date;
+
+  @ManyToOne((type) => User, (user) => user.notes, { eager: false })
+  user: User;
 }
