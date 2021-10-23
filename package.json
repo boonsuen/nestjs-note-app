@@ -9,7 +9,7 @@
     "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "start": "nest start",
+    "start": "STAGE=prod node dist/main",
     "start:dev": "STAGE=dev nest start --watch",
     "start:debug": "STAGE=dev nest start --debug --watch",
     "start:prod": "STAGE=prod node dist/main",
