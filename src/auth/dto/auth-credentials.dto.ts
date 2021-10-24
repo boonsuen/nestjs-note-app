@@ -7,14 +7,12 @@ export class AuthCredentialsDto {
   username: string;
 
   @IsString()
-  @MinLength(8)
+  @MinLength(6)
   @MaxLength(20)
-  @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password is too weak',
+  @Matches(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/, {
+    message: 'passsword must contain at least 1 letter and 1 number',
   })
-  // Passwords will contain at least 1 upper case letter
-  // Passwords will contain at least 1 lower case letter
-  // Passwords will contain at least 1 number or special character
+  // Passwords will contain at least 1 letter and 1 number
   // There is no length validation (min, max) in this regex!
   password: string;
 }
