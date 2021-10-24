@@ -26,15 +26,23 @@ export class AuthService {
 
   async signIn(
     authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<string> {
     const { username, password } = authCredentialsDto;
     const user = await this.usersRepository.findOne({ username });
     if (user && (await bcrypt.compare(password, user.password))) {
-      const payload: JwtPayload = { username };
-      const accessToken: string = this.jwtService.sign(payload);
-      return { accessToken };
+      return this.getCookieWithJwtToken(username);
     } else {
       throw new UnauthorizedException('Please check your login credentials');
     }
+  }
+
+  getCookieWithJwtToken(username: string): string {
+    const payload: JwtPayload = { username };
+    const accessToken: string = this.jwtService.sign(payload);
+    return `Authentication=${accessToken}; HttpOnly; Path=/; Max-Age=3600`;
+  }
+
+  getCookieForLogOut(): string {
+    return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
   }
 }

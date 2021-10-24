@@ -7,8 +7,8 @@ import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { User } from './user.entity';
 import * as bcrypt from 'bcrypt';
 
-enum UserError {
-  DUPLICATE_USERNAME = '23505',
+enum PostgresErrorCode {
+  UniqueViolation = '23505',
 }
 
 @EntityRepository(User)
@@ -24,7 +24,7 @@ export class UsersRepository extends Repository<User> {
       await this.save(user);
     } catch (error) {
       // Duplicate username
-      if (error.code === UserError.DUPLICATE_USERNAME) {
+      if (error.code === PostgresErrorCode.UniqueViolation) {
         throw new ConflictException('Username already exists');
       } else {
         throw new InternalServerErrorException();
