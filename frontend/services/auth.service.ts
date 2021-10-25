@@ -1,15 +1,15 @@
 import axios from 'axios';
 import BaseHttpService from './base-http.service';
 
-type TokenResponse = {
-  accessToken: string;
-  // TODO
+export interface SignUpResponse {
   username: string;
-};
+}
+
+export interface SignInResponse extends SignUpResponse {}
 
 export default class AuthService extends BaseHttpService {
-  async signUp(username: string, password: string) {
-    const result = await axios.post<TokenResponse>(
+  async signUp(username: string, password: string): Promise<SignUpResponse> {
+    const result = await axios.post<SignUpResponse>(
       `${this.API_BASE_URL}/auth/signup`,
       {
         username,
@@ -17,31 +17,22 @@ export default class AuthService extends BaseHttpService {
       },
       { withCredentials: true },
     );
-
-    const { accessToken } = result.data;
-    this.saveToken(accessToken);
+    return result.data;
   }
 
-  async signIn(username: string, password: string) {
-    const result = await axios.post<TokenResponse>(
+  async signIn(username: string, password: string): Promise<SignInResponse> {
+    const result = await axios.post<SignInResponse>(
       `${this.API_BASE_URL}/auth/signin`,
       {
         username,
         password,
       },
+      { withCredentials: true },
     );
-    const { accessToken } = result.data;
-    this.saveToken(accessToken);
-    return result.data.username;
+    return result.data;
   }
 
-  async getUser() {
-    const result = await axios.get(`${this.API_BASE_URL}/auth`, {
-      withCredentials: true,
-    });
-  }
-
-  async signOut() {
-    this.removeToken();
+  async signOut(): Promise<void> {
+    await this.post('auth/signout', {});
   }
 }

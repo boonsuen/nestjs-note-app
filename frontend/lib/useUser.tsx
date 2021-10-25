@@ -1,28 +1,34 @@
 import { useState } from 'react';
-import AuthService from '../services/auth.service'
+import AuthService, {
+  SignInResponse,
+  SignUpResponse,
+} from '../services/auth.service';
 
 const useUser = () => {
   const [username, setUsername] = useState<string | null>(null);
-  const authService = new AuthService;
+  const authService = new AuthService();
 
-  const signUp = async (username: string, password: string): Promise<void> => {
-    await authService.signUp(username, password);
+  const signUp = async (
+    username: string,
+    password: string,
+  ): Promise<SignUpResponse> => {
+    const signUpResponse = await authService.signUp(username, password);
+    return signUpResponse;
   };
 
-  const signIn = async (username: string, password: string) => {
-    // username = await this.authService.signin(username, password);
+  const signIn = async (
+    username: string,
+    password: string,
+  ): Promise<SignInResponse> => {
+    const signInResponse = await authService.signIn(username, password);
+    return signInResponse;
   };
 
-  const getUser = async () => {
-    authService.getUser();
-  }
-
-  const signOut = () => {
-    setUsername(null);
-    authService.removeToken();
+  const signOut = async (): Promise<void> => {
+    await authService.signOut();
   };
 
-  return { username, signIn, signUp, getUser, signOut };
+  return { username, signIn, signUp, signOut };
 };
 
 export default useUser;

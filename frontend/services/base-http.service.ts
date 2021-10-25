@@ -3,34 +3,40 @@ import Router from 'next/router';
 
 const instance = axios.create({
   withCredentials: true,
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080'
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080',
 });
 
 export default class BaseHttpService {
-  API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
+  API_BASE_URL =
+    process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:8080';
 
-  async get(endpoint: string, options = {}) {
-    // Object.assign(options, this._getCommonOptions());
+  async get(endpoint: string, options: AxiosRequestConfig<{}> = {}) {
     return axios
       .get(endpoint, options)
       .catch((error) => this._handleHttpError(error));
   }
 
-  async post(endpoint: string, data = {}, options: AxiosRequestConfig<{}> = {}) {
+  async post(
+    endpoint: string,
+    data = {},
+    options: AxiosRequestConfig<{}> = {},
+  ) {
     return instance
       .post(endpoint, data, options)
       .catch((error) => this._handleHttpError(error));
   }
 
-  async delete(endpoint: string, options = {}) {
-    // Object.assign(options, this._getCommonOptions());
+  async delete(endpoint: string, options: AxiosRequestConfig<{}> = {}) {
     return axios
       .delete(endpoint, options)
       .catch((error) => this._handleHttpError(error));
   }
 
-  async patch(endpoint: string, data = {}, options = {}) {
-    // Object.assign(options, this._getCommonOptions());
+  async patch(
+    endpoint: string,
+    data = {},
+    options: AxiosRequestConfig<{}> = {},
+  ) {
     return axios
       .patch(endpoint, data, options)
       .catch((error) => this._handleHttpError(error));
