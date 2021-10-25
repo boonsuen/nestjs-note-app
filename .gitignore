@@ -10,6 +10,7 @@
 # next.js
 /frontend/.next/
 /frontend/out/
+/frontend/.env.local
 
 # Logs
 logs
