@@ -1,10 +1,15 @@
 # compiled output
 /dist
 /node_modules
+/frontend/node_modules
 
 # Env
 .env.stage.dev
 .env.stage.prod
+
+# next.js
+/frontend/.next/
+/frontend/out/
 
 # Logs
 logs
