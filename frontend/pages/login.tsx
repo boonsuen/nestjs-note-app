@@ -3,7 +3,15 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Breadcrumb, Typography, Form, Input, Checkbox, Button, message } from 'antd';
+import {
+  Breadcrumb,
+  Typography,
+  Form,
+  Input,
+  Checkbox,
+  Button,
+  message,
+} from 'antd';
 import {
   HomeOutlined,
   LoginOutlined,
@@ -112,7 +120,8 @@ const LoginForm = () => {
           onChange={handleChange}
         />
       </Form.Item>
-      <Form.Item>
+
+      {/* <Form.Item>
         <Form.Item name="remember" valuePropName="checked" noStyle>
           <Checkbox>Remember me</Checkbox>
         </Form.Item>
@@ -120,10 +129,15 @@ const LoginForm = () => {
         <a className="login-form-forgot" href="">
           Forgot password
         </a>
-      </Form.Item>
+      </Form.Item> */}
 
       <Form.Item>
-        <Button loading={isSubmitting} type="primary" htmlType="submit" className="login-form-button">
+        <Button
+          loading={isSubmitting}
+          type="primary"
+          htmlType="submit"
+          className="login-form-button"
+        >
           Log in
         </Button>
         <div style={{ marginTop: 20 }}>
@@ -170,24 +184,27 @@ export default LoginPage;
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.headers.cookie) {
     try {
-      const result = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`, {
-        withCredentials: true,
-        headers: {
-          'Cookie': context.req.headers.cookie
-        }
-      });
+      const result = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`,
+        {
+          withCredentials: true,
+          headers: {
+            Cookie: context.req.headers.cookie,
+          },
+        },
+      );
       if (result.status === 200) {
         return {
           redirect: {
             destination: '/app',
-            permanent: false
+            permanent: false,
           },
         };
       }
     } catch (error) {
       console.log(error.response.data);
     }
-  }  
+  }
 
   return {
     props: {},

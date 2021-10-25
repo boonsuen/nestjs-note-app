@@ -10,7 +10,7 @@ import {
   UserOutlined,
   LockOutlined,
 } from '@ant-design/icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useUser from '../lib/useUser';
 import ErrorMessage from '../components/ErrorMessage';
 import axios from 'axios';
@@ -61,8 +61,8 @@ const SignupForm = () => {
   //       });
   //       console.log(result);
   //     } catch (error) {
-  //       console.log(error.response.data);        
-  //     } 
+  //       console.log(error.response.data);
+  //     }
   //   };
   //   fetchData();
   // }, []);
@@ -76,13 +76,12 @@ const SignupForm = () => {
       router.push({
         pathname: '/app',
       });
-    } catch (error) {   
+    } catch (error) {
       if (error.response?.data?.message) {
         setErrorMessage(error.response.data.message);
       } else {
         message.error('Please check your connection');
       }
-      setIsSubmitting(false);
       setIsSubmitting(false);
     }
   };
@@ -129,7 +128,12 @@ const SignupForm = () => {
         />
       </Form.Item>
       <Form.Item>
-        <Button loading={isSubmitting} type="primary" htmlType="submit" className="login-form-button">
+        <Button
+          loading={isSubmitting}
+          type="primary"
+          htmlType="submit"
+          className="login-form-button"
+        >
           Create Account
         </Button>
         <div style={{ marginTop: 20 }}>
@@ -180,22 +184,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       const result = await axios.get(`http://localhost:8080/auth`, {
         withCredentials: true,
         headers: {
-          'Cookie': context.req.headers.cookie
-        }
+          Cookie: context.req.headers.cookie,
+        },
       });
       // If token is verified
       if (result.status === 200) {
         return {
           redirect: {
             destination: '/app',
-            permanent: false
+            permanent: false,
           },
         };
       }
     } catch (error) {
       console.log(error.response.data);
     }
-  }  
+  }
 
   // context.req.cookies['Authentication'];
 
