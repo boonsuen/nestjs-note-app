@@ -16,12 +16,10 @@ export class AuthService {
 
   async signUp(
     authCredentialsDto: AuthCredentialsDto
-  ): Promise<{ accessToken: string }> {
+  ): Promise<string> {
     const { username } = authCredentialsDto;
     await this.usersRepository.createUser(authCredentialsDto);
-    const payload: JwtPayload = { username };
-    const accessToken: string = this.jwtService.sign(payload);
-    return { accessToken };
+    return this.getCookieWithJwtToken(username);
   }
 
   async signIn(

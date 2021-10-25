@@ -18,12 +18,16 @@ import { Response } from 'express';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // TODO
   @Post('/signup')
-  signUp(
+  async signUp(
     @Body() authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ accessToken: string }> {
-    return this.authService.signUp(authCredentialsDto);
+    @Res() response: Response,
+  ): Promise<void> {
+    const cookie = await this.authService.signUp(authCredentialsDto);
+    response.setHeader('Set-Cookie', cookie);
+    response.send({
+      username: authCredentialsDto.username,
+    });
   }
 
   @HttpCode(200)
