@@ -3,17 +3,18 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
-import { Breadcrumb, Typography, Form, Input, Button } from 'antd';
+import { Breadcrumb, Typography, Form, Input, Button, message } from 'antd';
 import {
   HomeOutlined,
-  LoginOutlined,
+  UserAddOutlined,
   UserOutlined,
   LockOutlined,
 } from '@ant-design/icons';
-import { useState } from 'react';
+import React, { useState } from 'react';
 import useUser from '../lib/useUser';
 import ErrorMessage from '../components/ErrorMessage';
 import axios from 'axios';
+import { media } from '../components/GlobalStyle.css';
 
 const { Title } = Typography;
 
@@ -25,6 +26,9 @@ const FormContainer = styled.div`
   display: flex;
   justify-content: center;
   padding: 40px;
+  ${media['600']`
+    padding: 40px 0px;
+  `}
 
   .login-form {
     max-width: 300px;
@@ -44,6 +48,7 @@ const FormContainer = styled.div`
 const SignupForm = () => {
   const router = useRouter();
   const { signUp } = useUser();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState<null | string | string[]>(
     null,
   );
@@ -63,6 +68,8 @@ const SignupForm = () => {
   // }, []);
 
   const onFinish = async (values: { username: string; password: string }) => {
+    setIsSubmitting(true);
+
     const { username, password } = values;
     try {
       await signUp(username, password);
@@ -70,12 +77,22 @@ const SignupForm = () => {
         pathname: '/app',
       });
     } catch (error) {   
-      setErrorMessage(error.response.data.message);
+      if (error.response?.data?.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        message.error('Please check your connection');
+      }
+      setIsSubmitting(false);
+      setIsSubmitting(false);
     }
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage(null);
   };
 
   return (
@@ -96,6 +113,7 @@ const SignupForm = () => {
           prefix={<UserOutlined className="site-form-item-icon" />}
           placeholder="Username"
           spellCheck={false}
+          onChange={handleChange}
         />
       </Form.Item>
       <Form.Item
@@ -107,10 +125,11 @@ const SignupForm = () => {
           type="password"
           placeholder="Password"
           autoComplete="password"
+          onChange={handleChange}
         />
       </Form.Item>
       <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
+        <Button loading={isSubmitting} type="primary" htmlType="submit" className="login-form-button">
           Create Account
         </Button>
         <div style={{ marginTop: 20 }}>
@@ -140,7 +159,7 @@ const SignupPage: React.FC = () => {
             </Link>
           </Breadcrumb.Item>
           <Breadcrumb.Item>
-            <LoginOutlined />
+            <UserAddOutlined />
             <span>Sign Up</span>
           </Breadcrumb.Item>
         </Breadcrumb>

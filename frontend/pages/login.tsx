@@ -1,15 +1,20 @@
-import styled from 'styled-components';
 import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
-import { Breadcrumb, Typography, Form, Input, Checkbox, Button } from 'antd';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
+import { Breadcrumb, Typography, Form, Input, Checkbox, Button, message } from 'antd';
 import {
   HomeOutlined,
   LoginOutlined,
   UserOutlined,
   LockOutlined,
 } from '@ant-design/icons';
-import { getSession } from 'next-auth/react';
+import { useState } from 'react';
+import useUser from '../lib/useUser';
+import ErrorMessage from '../components/ErrorMessage';
+import axios from 'axios';
+import { media } from '../components/GlobalStyle.css';
 
 const { Title } = Typography;
 
@@ -21,6 +26,9 @@ const FormContainer = styled.div`
   display: flex;
   justify-content: center;
   padding: 40px;
+  ${media['600']`
+    padding: 40px 0px;
+  `}
 
   .login-form {
     max-width: 300px;
@@ -38,12 +46,38 @@ const FormContainer = styled.div`
 `;
 
 const LoginForm = () => {
-  const onFinish = (values: any) => {
-    console.log('Received values of form: ', values);
+  const router = useRouter();
+  const { signIn } = useUser();
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<null | string | string[]>(
+    null,
+  );
+
+  const onFinish = async (values: { username: string; password: string }) => {
+    setIsSubmitting(true);
+
+    const { username, password } = values;
+    try {
+      await signIn(username, password);
+      router.push({
+        pathname: '/app',
+      });
+    } catch (error) {
+      if (error.response?.data?.message) {
+        setErrorMessage(error.response.data.message);
+      } else {
+        message.error('Please check your connection');
+      }
+      setIsSubmitting(false);
+    }
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log('Failed:', errorInfo);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage(null);
   };
 
   return (
@@ -54,6 +88,7 @@ const LoginForm = () => {
       onFinish={onFinish}
     >
       <Title level={2}>Log In</Title>
+      {errorMessage && <ErrorMessage message={errorMessage} />}
       <Form.Item
         name="username"
         rules={[{ required: true, message: 'Please input your username!' }]}
@@ -62,6 +97,7 @@ const LoginForm = () => {
           prefix={<UserOutlined className="site-form-item-icon" />}
           placeholder="Username"
           spellCheck={false}
+          onChange={handleChange}
         />
       </Form.Item>
       <Form.Item
@@ -72,6 +108,8 @@ const LoginForm = () => {
           prefix={<LockOutlined className="site-form-item-icon" />}
           type="password"
           placeholder="Password"
+          autoComplete="password"
+          onChange={handleChange}
         />
       </Form.Item>
       <Form.Item>
@@ -85,7 +123,7 @@ const LoginForm = () => {
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" className="login-form-button">
+        <Button loading={isSubmitting} type="primary" htmlType="submit" className="login-form-button">
           Log in
         </Button>
         <div style={{ marginTop: 20 }}>
@@ -128,3 +166,30 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  if (context.req.headers.cookie) {
+    try {
+      const result = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`, {
+        withCredentials: true,
+        headers: {
+          'Cookie': context.req.headers.cookie
+        }
+      });
+      if (result.status === 200) {
+        return {
+          redirect: {
+            destination: '/app',
+            permanent: false
+          },
+        };
+      }
+    } catch (error) {
+      console.log(error.response.data);
+    }
+  }  
+
+  return {
+    props: {},
+  };
+};

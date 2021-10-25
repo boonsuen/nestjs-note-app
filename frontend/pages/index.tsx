@@ -98,12 +98,12 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     } catch (error) {
       console.log(error.response.data);
     }
-  } else {
-    return {
-      props: {
-        isLoggedIn: false,
-        username: null
-      },
-    };
   }
+  
+  return {
+    props: {
+      isLoggedIn: false,
+      username: null
+    },
+  };  
 };

@@ -4,8 +4,11 @@ import useUser from '../lib/useUser';
 import { GetServerSideProps } from 'next';
 import styled from 'styled-components';
 import { LogoutOutlined, PlusOutlined } from '@ant-design/icons';
+import React from 'react';
+import { useRouter } from 'next/router';
+import axios from 'axios';
 
-const { Title } = Typography;
+const { Title, Paragraph } = Typography;
 
 const Container = styled.div`
   width: 90%;
@@ -18,8 +21,24 @@ const Container = styled.div`
   }
 `;
 
-const App: React.FC = () => {
-  const { username } = useUser();
+const App: React.FC<{
+  data: {
+    id: string;
+    username: string;
+    notes: any;
+  };
+}> = ({ data }) => {
+  console.log(data);
+
+  const { username, signOut } = useUser();
+  const router = useRouter();
+
+  const handleSignOut = (e: React.MouseEvent<HTMLButtonElement>) => {
+    signOut();
+    router.push({
+      pathname: '/login',
+    });
+  };
 
   return (
     <>
@@ -28,8 +47,9 @@ const App: React.FC = () => {
       </Head>
       <Container>
         <Title style={{ marginTop: 30 }}>NestJS Note App</Title>
+        <Paragraph>Logged in as {data.username}</Paragraph>
         <Space>
-          <Button type="default">
+          <Button type="default" onClick={handleSignOut}>
             <LogoutOutlined />
             Sign Out
           </Button>
@@ -46,9 +66,50 @@ const App: React.FC = () => {
 export default App;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
-  const cookies = context.req.headers.cookie;
-
-  return {
-    props: {},
-  };
+  if (context.req.headers.cookie) {
+    try {
+      const result = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`,
+        {
+          withCredentials: true,
+          headers: {
+            Cookie: context.req.headers.cookie,
+          },
+        },
+      );
+      
+      if (result.status === 200) {
+        return {
+          props: {
+            data: result.data,
+          },
+        };
+      } else {
+        return {
+          redirect: {
+            destination: '/login',
+            permanent: false,
+          },
+        };
+      }
+    } catch (error) {
+      if (error.response.data.statusCode === 401) {
+        return {
+          redirect: {
+            destination: '/login',
+            permanent: false,
+          },
+        };
+      } else {
+        throw error;
+      }
+    }
+  } else {
+    return {
+      redirect: {
+        destination: '/login',
+        permanent: false,
+      },
+    };
+  }
 };
