@@ -69,7 +69,9 @@ const App: React.FC<{
         >
           {notes.length ? (
             <Space size={15} direction="vertical" style={{ width: '100%' }}>
-              {notes.map((note) => (
+              {notes.sort((a, b) => {
+                return Date.parse(b.updated_at) - Date.parse(a.updated_at)
+              }).map((note) => (
                 <NoteList key={note.id} note={note} />
               ))}
             </Space>
