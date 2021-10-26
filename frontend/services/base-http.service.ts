@@ -27,7 +27,7 @@ export default class BaseHttpService {
   }
 
   async delete(endpoint: string, options: AxiosRequestConfig<{}> = {}) {
-    return axios
+    return instance
       .delete(endpoint, options)
       .catch((error) => this._handleHttpError(error));
   }

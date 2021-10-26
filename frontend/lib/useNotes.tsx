@@ -6,11 +6,11 @@ type NotesContextType = {
   notes: Note[];
   createNote: (title: string, body?: string) => Promise<Note>;
   updateNote: (id: string, title: string, body?: string) => Promise<Note>;
+  deleteNote: (id: string) => Promise<void>;
 };
 
 const useNotesService = (initialNotes: Note[]) => {
   const [notes, setNotes] = useState<Note[]>(initialNotes);
-  const filter = { search: '' };
 
   const notesService = new NotesService();
 
@@ -33,13 +33,19 @@ const useNotesService = (initialNotes: Note[]) => {
     return note;
   };
 
-  return { notes, createNote, updateNote };
+  const deleteNote = async (id: string): Promise<void> => {
+    await notesService.deleteNote(id);
+    setNotes(notes.filter((note) => note.id !== id));
+  };
+
+  return { notes, createNote, updateNote, deleteNote };
 };
 
 const notesContext = createContext<NotesContextType>({
   notes: [],
   createNote: async () => [] as any,
   updateNote: async () => [] as any,
+  deleteNote: async () => {},
 });
 
 export const NotesProvider: React.FC<{ initialNotes: Note[] }> = ({

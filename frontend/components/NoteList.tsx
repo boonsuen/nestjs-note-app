@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { Note } from '../types/note.type';
 import { Typography } from 'antd';
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import EditNoteModal from './EditNoteModal';
 import { useNotes } from '../lib/useNotes';
 
@@ -44,16 +44,23 @@ const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const [updateLoading, setUpdateLoading] = useState<boolean>(false);
   const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
-  const { updateNote } = useNotes();
+  const { updateNote, deleteNote } = useNotes();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     setModalVisible(true);
   };
 
-  const onUpdate = async (values: { title: string; body: string }) => {
+  const onUpdate = async (title: string, body: string) => {
     setUpdateLoading(true);
-    await updateNote(note.id, values.title.trim(), values.body.trim());
+    await updateNote(note.id, title.trim(), body.trim());
     setUpdateLoading(false);
+    setModalVisible(false);
+  };
+
+  const onDelete = async (id: string) => {
+    setDeleteLoading(true);
+    await deleteNote(note.id);
+    setDeleteLoading(false);
     setModalVisible(false);
   };
 
@@ -65,7 +72,8 @@ const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
       </StyledNoteListItem>
       <EditNoteModal
         visible={modalVisible}
-        onCreate={onUpdate}
+        onUpdate={onUpdate}
+        onDelete={onDelete}
         onCancel={() => {
           setModalVisible(false);
         }}
@@ -73,6 +81,7 @@ const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
         updateLoading={updateLoading}
         title={note.title}
         body={note.body}
+        noteId={note.id}
       />
     </>
   );

@@ -1,5 +1,6 @@
 import { Button, Modal, Form, Input, message } from 'antd';
 import { DeleteOutlined } from '@ant-design/icons';
+import { useState } from 'react';
 
 interface Values {
   title: string;
@@ -8,36 +9,49 @@ interface Values {
 
 interface EditNoteModalProps {
   visible: boolean;
-  onCreate: (values: Values) => Promise<void>;
+  onUpdate: (title: string, body: string) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
   onCancel: () => void;
   updateLoading: boolean;
   deleteLoading: boolean;
   title: string;
   body: string;
+  noteId: string;
 }
 
 const EditNoteModal: React.FC<EditNoteModalProps> = ({
   visible,
-  onCreate,
+  onUpdate,
+  onDelete,
   onCancel,
   updateLoading,
   deleteLoading,
   title,
   body,
+  noteId,
 }) => {
   const [form] = Form.useForm();
+  const initialValues = {
+    title,
+    body,
+  };
 
   const handleOk = () => {
     form
       .validateFields()
       .then(async (values) => {
-        await onCreate(values);
+        await onUpdate(values.title, values.body);
         form.resetFields();
         message.success('Note updated');
       })
       .catch((info) => {
         console.log('Validate Failed:', info);
       });
+  };
+
+  const handleDelete = async () => {
+    await onDelete(noteId);
+    message.success('Note deleted');
   };
 
   return (
@@ -54,13 +68,19 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
           key="link"
           type="default"
           loading={deleteLoading}
-          onClick={handleOk}
+          onClick={handleDelete}
           danger
           style={{
             float: 'left',
           }}
         >
-          {deleteLoading ? "Delete" : <><DeleteOutlined /> Delete</>}          
+          {deleteLoading ? (
+            'Delete'
+          ) : (
+            <>
+              <DeleteOutlined /> Delete
+            </>
+          )}
         </Button>,
         <Button key="back" onClick={onCancel}>
           Cancel
@@ -79,7 +99,7 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
         form={form}
         layout="vertical"
         name="form_in_modal"
-        initialValues={{ title, body }}
+        initialValues={initialValues}
       >
         <Form.Item
           name="title"
@@ -91,7 +111,7 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
             },
           ]}
         >
-          <Input disabled={updateLoading || deleteLoading} />
+          <Input autoComplete="off" disabled={updateLoading || deleteLoading} />
         </Form.Item>
         <Form.Item name="body" label="Body">
           <Input.TextArea rows={3} disabled={updateLoading || deleteLoading} />

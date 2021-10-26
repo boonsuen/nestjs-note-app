@@ -20,14 +20,22 @@ export default class NotesService extends BaseHttpService {
     title: string,
     body: string = '',
   ): Promise<Note> {
-    const result = await axios.patch<Note>(
-      `${this.API_BASE_URL}/notes/${id}`,
-      {
-        title,
-        body,
-      },
-      { withCredentials: true },
-    );
-    return result.data;
+    try {
+      const result = await axios.patch<Note>(
+        `${this.API_BASE_URL}/notes/${id}`,
+        {
+          title,
+          body,
+        },
+        { withCredentials: true },
+      );
+      return result.data;
+    } catch (error) {
+      this._handleHttpError(error);
+    }
+  }
+
+  async deleteNote(id: string): Promise<void> {
+    await this.delete(`notes/${id}`);
   }
 }

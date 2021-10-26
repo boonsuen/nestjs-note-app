@@ -61,7 +61,7 @@ const NoteCreateForm: React.FC<NoteCreateFormProps> = ({
             },
           ]}
         >
-          <Input disabled={confirmLoading} />
+          <Input disabled={confirmLoading} autoComplete="off" />
         </Form.Item>
         <Form.Item name="body" label="Body">
           <Input.TextArea rows={3} disabled={confirmLoading} />
