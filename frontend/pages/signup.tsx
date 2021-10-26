@@ -195,7 +195,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   // If a cookie is sent from browser
   if (context.req.headers.cookie) {
     try {
-      const result = await axios.get(`http://localhost:8080/auth`, {
+      const result = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`, {
         withCredentials: true,
         headers: {
           Cookie: context.req.headers.cookie,

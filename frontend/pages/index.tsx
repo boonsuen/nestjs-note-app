@@ -82,7 +82,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         id: string;
         username: string;
         notes: {}[];
-      }>(`http://localhost:8080/auth`, {
+      }>(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth`, {
         withCredentials: true,
         headers: {
           Cookie: context.req.headers.cookie,
@@ -92,18 +92,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return {
         props: {
           isLoggedIn: result.status === 200,
-          username: result.data.username
+          username: result.data.username,
         },
       };
     } catch (error) {
       console.log(error.response.data);
     }
   }
-  
+
   return {
     props: {
       isLoggedIn: false,
-      username: null
+      username: null,
     },
-  };  
+  };
 };
