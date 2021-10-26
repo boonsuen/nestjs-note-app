@@ -4,7 +4,6 @@ import useUser from '../lib/useUser';
 import { GetServerSideProps } from 'next';
 import styled from 'styled-components';
 import { LogoutOutlined } from '@ant-design/icons';
-import React, { ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import CreateNote from '../components/CreateNote';

@@ -1,5 +1,5 @@
-import React, { Dispatch, SetStateAction, useState } from 'react';
-import { Button, Modal, Form, Input, Radio, message } from 'antd';
+import React, { useState } from 'react';
+import { Button, Modal, Form, Input, message } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
 import { useNotes } from '../lib/useNotes';
 

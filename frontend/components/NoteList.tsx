@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 import { Note } from '../types/note.type';
 import { Typography } from 'antd';
+import React, { Dispatch, SetStateAction, useState } from 'react';
+import EditNoteModal from './EditNoteModal';
+import { useNotes } from '../lib/useNotes';
 
 interface NoteListItemProps {
   note: Note;
@@ -13,7 +16,7 @@ const StyledNoteListItem = styled.div`
   color: #000000d9;
   width: 100%;
   cursor: pointer;
-  transition: box-shadow .3s, border-color .3s;
+  transition: box-shadow 0.3s, border-color 0.3s;
   &:hover {
     box-shadow: 0 3px 6px -4px #0000001f, 0 6px 16px #00000014,
       0 9px 28px 8px #0000000d;
@@ -38,11 +41,39 @@ const StyledNoteListItem = styled.div`
 `;
 
 const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
+  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
+  const {  } = useNotes();
+
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    setModalVisible(true);
+  };
+
+  const onCreate = async (values: { title: string; body: string }) => {
+    setConfirmLoading(true);
+    // await createNote(values.title.trim(), values.body.trim());
+    setConfirmLoading(false);
+    setModalVisible(false);
+  };
+
   return (
-    <StyledNoteListItem>
-      <Typography.Title level={4}>{note.title}</Typography.Title>
-      {note.body.length > 0 && <Typography.Text>{note.body}</Typography.Text>}
-    </StyledNoteListItem>
+    <>
+      <StyledNoteListItem onClick={handleClick}>
+        <Typography.Title level={4}>{note.title}</Typography.Title>
+        {note.body.length > 0 && <Typography.Text>{note.body}</Typography.Text>}
+      </StyledNoteListItem>
+      <EditNoteModal
+        visible={modalVisible}
+        onCreate={onCreate}
+        onCancel={() => {
+          setModalVisible(false);
+        }}
+        confirmLoading={confirmLoading}
+        title={note.title}
+        body={note.body}
+        noteId={note.id}
+      />
+    </>
   );
 };
 
