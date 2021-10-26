@@ -37,12 +37,12 @@ export class AuthService {
     const accessToken: string = this.jwtService.sign(payload);
     return this.configService.get('STAGE') === 'dev'
       ? `Authentication=${accessToken}; HttpOnly; Path=/; Max-Age=3600`
-      : `Authentication=${accessToken}; HttpOnly; Domain=nestjs-note-app.altis.com; Path=/; Max-Age=3600`;
+      : `Authentication=${accessToken}; HttpOnly; Domain=nestjs-note-app.altisjs.com; Path=/; Max-Age=3600`;
   }
 
   getCookieForLogOut(): string {
     return this.configService.get('STAGE') === 'dev'
       ? `Authentication=; HttpOnly; Path=/; Max-Age=0`
-      : `Authentication=; HttpOnly; Domain=nestjs-note-app.altis.com; Path=/; Max-Age=0`;
+      : `Authentication=; HttpOnly; Domain=nestjs-note-app.altisjs.com; Path=/; Max-Age=0`;
   }
 }
