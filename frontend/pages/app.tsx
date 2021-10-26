@@ -39,8 +39,8 @@ const App: React.FC<{
   const { notes } = useNotes();
   const router = useRouter();
 
-  const handleSignOut = (e: React.MouseEvent<HTMLButtonElement>) => {
-    signOut();
+  const handleSignOut = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    await signOut();
     router.push({
       pathname: '/login',
     });
