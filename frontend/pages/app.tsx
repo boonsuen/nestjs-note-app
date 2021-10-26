@@ -18,9 +18,9 @@ const Container = styled.div`
   width: 90%;
   max-width: 50rem;
   margin: 0 auto;
-  padding: 0 1.6rem;
+  padding: 0 1.6rem 80px 1.6rem;
   ${media['600']`
-    padding: 0px;
+    padding: 0 0 80px 0;
   `}
 
   h1 {
