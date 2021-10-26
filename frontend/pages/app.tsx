@@ -11,12 +11,13 @@ import CreateNote from '../components/CreateNote';
 import { Note } from '../types/note.type';
 import { media } from '../components/GlobalStyle.css';
 import { NotesProvider, useNotes } from '../lib/useNotes';
+import NoteList from '../components/NoteList';
 
 const { Title, Paragraph } = Typography;
 
 const Container = styled.div`
   width: 90%;
-  max-width: 60rem;
+  max-width: 50rem;
   margin: 0 auto;
   padding: 0 1.6rem;
   ${media['600']`
@@ -68,12 +69,9 @@ const App: React.FC<{
           }}
         >
           {notes.length ? (
-            <Space direction="vertical">
+            <Space size={15} direction="vertical" style={{ width: '100%' }}>
               {notes.map((note) => (
-                <div key={note.id}>
-                  <Title level={4}>{note.title}</Title>
-                  <div>{note.body}</div>
-                </div>
+                <NoteList key={note.id} note={note} />
               ))}
             </Space>
           ) : (
