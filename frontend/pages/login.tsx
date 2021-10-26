@@ -60,11 +60,12 @@ const LoginForm = () => {
   const [errorMessage, setErrorMessage] = useState<null | string | string[]>(
     null,
   );
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   const onFinish = async (values: { username: string; password: string }) => {
     setIsSubmitting(true);
 
-    const { username, password } = values;
     try {
       await signIn(username, password);
       router.push({
@@ -84,16 +85,23 @@ const LoginForm = () => {
     console.log('Failed:', errorInfo);
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMessage(null);
+    setUsername(e.target.value.trim());
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage(null);
+    setPassword(e.target.value);
   };
 
   return (
     <Form
       name="normal_login"
       className="login-form"
-      initialValues={{ remember: true }}
+      initialValues={{ username, password }}
       onFinish={onFinish}
+      onFinishFailed={onFinishFailed}
     >
       <Title level={2}>Log In</Title>
       {errorMessage && <ErrorMessage message={errorMessage} />}
@@ -105,7 +113,8 @@ const LoginForm = () => {
           prefix={<UserOutlined className="site-form-item-icon" />}
           placeholder="Username"
           spellCheck={false}
-          onChange={handleChange}
+          onChange={handleUsernameChange}
+          value={username}
         />
       </Form.Item>
       <Form.Item
@@ -117,7 +126,8 @@ const LoginForm = () => {
           type="password"
           placeholder="Password"
           autoComplete="password"
-          onChange={handleChange}
+          onChange={handlePasswordChange}
+          value={password}
         />
       </Form.Item>
 

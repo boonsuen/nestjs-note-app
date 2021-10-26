@@ -52,6 +52,8 @@ const SignupForm = () => {
   const [errorMessage, setErrorMessage] = useState<null | string | string[]>(
     null,
   );
+  const [username, setUsername] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
 
   // useEffect(() => {
   //   const fetchData = async () => {
@@ -90,6 +92,16 @@ const SignupForm = () => {
     console.log('Failed:', errorInfo);
   };
 
+  const handleUsernameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage(null);
+    setUsername(e.target.value.trim());
+  };
+
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setErrorMessage(null);
+    setPassword(e.target.value);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setErrorMessage(null);
   };
@@ -112,7 +124,8 @@ const SignupForm = () => {
           prefix={<UserOutlined className="site-form-item-icon" />}
           placeholder="Username"
           spellCheck={false}
-          onChange={handleChange}
+          onChange={handleUsernameChange}
+          value={username}
         />
       </Form.Item>
       <Form.Item
@@ -124,7 +137,8 @@ const SignupForm = () => {
           type="password"
           placeholder="Password"
           autoComplete="password"
-          onChange={handleChange}
+          onChange={handlePasswordChange}
+          value={password}
         />
       </Form.Item>
       <Form.Item>
