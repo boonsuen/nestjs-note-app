@@ -43,7 +43,7 @@ export class NotesController {
   createNote(
     @Body() createNoteDto: CreateNoteDto,
     @GetUser() user: User
-  ) {
+  ): Promise<Note> {
     return this.notesService.createNote(createNoteDto, user);
   }
 

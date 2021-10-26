@@ -9,7 +9,7 @@ export class AuthCredentialsDto {
   @IsString()
   @MinLength(6)
   @MaxLength(20)
-  @Matches(/^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9]+)$/, {
+  @Matches(/^(?=.*[0-9].*)(?=.*[a-zA-Z].*)(.*[a-zA-Z0-9].+)$/, {
     message: 'passsword must contain at least 1 letter and 1 number',
   })
   // Passwords will contain at least 1 letter and 1 number
