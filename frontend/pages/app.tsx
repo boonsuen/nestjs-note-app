@@ -1,12 +1,16 @@
 import Head from 'next/head';
-import { Button, Space, Typography } from 'antd';
+import { Button, Divider, Empty, Space, Typography } from 'antd';
 import useUser from '../lib/useUser';
 import { GetServerSideProps } from 'next';
 import styled from 'styled-components';
-import { LogoutOutlined, PlusOutlined } from '@ant-design/icons';
-import React from 'react';
+import { LogoutOutlined } from '@ant-design/icons';
+import React, { ReactNode } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import CreateNote from '../components/CreateNote';
+import { Note } from '../types/note.type';
+import { media } from '../components/GlobalStyle.css';
+import { NotesProvider, useNotes } from '../lib/useNotes';
 
 const { Title, Paragraph } = Typography;
 
@@ -15,6 +19,9 @@ const Container = styled.div`
   max-width: 60rem;
   margin: 0 auto;
   padding: 0 1.6rem;
+  ${media['600']`
+    padding: 0px;
+  `}
 
   h1 {
     font-size: 2rem;
@@ -25,12 +32,11 @@ const App: React.FC<{
   data: {
     id: string;
     username: string;
-    notes: any;
+    notes: Note[];
   };
 }> = ({ data }) => {
-  console.log(data);
-
-  const { username, signOut } = useUser();
+  const { signOut } = useUser();
+  const { notes } = useNotes();
   const router = useRouter();
 
   const handleSignOut = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -53,17 +59,50 @@ const App: React.FC<{
             <LogoutOutlined />
             Sign Out
           </Button>
-          <Button type="primary">
-            <PlusOutlined />
-            Create Note
-          </Button>
+          <CreateNote />
         </Space>
+        <Divider />
+        <div
+          style={{
+            marginTop: 30,
+          }}
+        >
+          {notes.length ? (
+            <Space direction="vertical">
+              {notes.map((note) => (
+                <div key={note.id}>
+                  <Title level={4}>{note.title}</Title>
+                  <div>{note.body}</div>
+                </div>
+              ))}
+            </Space>
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={'No Notes'}
+            />
+          )}
+        </div>
       </Container>
     </>
   );
 };
 
-export default App;
+const AppWrapper: React.FC<{
+  data: {
+    id: string;
+    username: string;
+    notes: Note[];
+  };
+}> = ({ data }) => {
+  return (
+    <NotesProvider initialNotes={data.notes}>
+      <App data={data} />
+    </NotesProvider>
+  );
+};
+
+export default AppWrapper;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   if (context.req.headers.cookie) {
@@ -77,7 +116,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           },
         },
       );
-      
+
       if (result.status === 200) {
         return {
           props: {
