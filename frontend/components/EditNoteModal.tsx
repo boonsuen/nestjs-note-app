@@ -1,7 +1,5 @@
-import React, { useState } from 'react';
 import { Button, Modal, Form, Input, message } from 'antd';
-import { PlusOutlined, DeleteOutlined } from '@ant-design/icons';
-import { useNotes } from '../lib/useNotes';
+import { DeleteOutlined } from '@ant-design/icons';
 
 interface Values {
   title: string;
@@ -12,20 +10,20 @@ interface EditNoteModalProps {
   visible: boolean;
   onCreate: (values: Values) => Promise<void>;
   onCancel: () => void;
-  confirmLoading: boolean;
+  updateLoading: boolean;
+  deleteLoading: boolean;
   title: string;
   body: string;
-  noteId: string;
 }
 
 const EditNoteModal: React.FC<EditNoteModalProps> = ({
   visible,
   onCreate,
   onCancel,
-  confirmLoading,
+  updateLoading,
+  deleteLoading,
   title,
   body,
-  noteId,
 }) => {
   const [form] = Form.useForm();
 
@@ -45,25 +43,24 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
   return (
     <Modal
       visible={visible}
-      title="Edit a new note"
+      title="Edit note"
       okText="Update"
       cancelText="Cancel"
-      confirmLoading={confirmLoading}
+      confirmLoading={updateLoading || deleteLoading}
       onCancel={onCancel}
       onOk={handleOk}
       footer={[
         <Button
           key="link"
-          href="https://google.com"
           type="default"
-          loading={confirmLoading}
+          loading={deleteLoading}
           onClick={handleOk}
           danger
           style={{
             float: 'left',
           }}
         >
-          <DeleteOutlined /> Delete
+          {deleteLoading ? "Delete" : <><DeleteOutlined /> Delete</>}          
         </Button>,
         <Button key="back" onClick={onCancel}>
           Cancel
@@ -71,7 +68,7 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
         <Button
           key="submit"
           type="primary"
-          loading={confirmLoading}
+          loading={updateLoading}
           onClick={handleOk}
         >
           Update
@@ -94,10 +91,10 @@ const EditNoteModal: React.FC<EditNoteModalProps> = ({
             },
           ]}
         >
-          <Input disabled={confirmLoading} />
+          <Input disabled={updateLoading || deleteLoading} />
         </Form.Item>
         <Form.Item name="body" label="Body">
-          <Input.TextArea rows={3} disabled={confirmLoading} />
+          <Input.TextArea rows={3} disabled={updateLoading || deleteLoading} />
         </Form.Item>
       </Form>
     </Modal>

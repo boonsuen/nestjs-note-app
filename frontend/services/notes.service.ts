@@ -20,7 +20,7 @@ export default class NotesService extends BaseHttpService {
     title: string,
     body: string = '',
   ): Promise<Note> {
-    const result = await axios.post<Note>(
+    const result = await axios.patch<Note>(
       `${this.API_BASE_URL}/notes/${id}`,
       {
         title,

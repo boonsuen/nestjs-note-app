@@ -42,17 +42,18 @@ const StyledNoteListItem = styled.div`
 
 const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const [confirmLoading, setConfirmLoading] = useState<boolean>(false);
-  const {  } = useNotes();
+  const [updateLoading, setUpdateLoading] = useState<boolean>(false);
+  const [deleteLoading, setDeleteLoading] = useState<boolean>(false);
+  const { updateNote } = useNotes();
 
   const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     setModalVisible(true);
   };
 
-  const onCreate = async (values: { title: string; body: string }) => {
-    setConfirmLoading(true);
-    // await createNote(values.title.trim(), values.body.trim());
-    setConfirmLoading(false);
+  const onUpdate = async (values: { title: string; body: string }) => {
+    setUpdateLoading(true);
+    await updateNote(note.id, values.title.trim(), values.body.trim());
+    setUpdateLoading(false);
     setModalVisible(false);
   };
 
@@ -64,14 +65,14 @@ const NoteListItem: React.FC<NoteListItemProps> = ({ note }) => {
       </StyledNoteListItem>
       <EditNoteModal
         visible={modalVisible}
-        onCreate={onCreate}
+        onCreate={onUpdate}
         onCancel={() => {
           setModalVisible(false);
         }}
-        confirmLoading={confirmLoading}
+        deleteLoading={deleteLoading}
+        updateLoading={updateLoading}
         title={note.title}
         body={note.body}
-        noteId={note.id}
       />
     </>
   );
