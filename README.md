@@ -5,7 +5,8 @@
   - REST API
   - Postgres database
   - TypeORM
-- API endpoint: <a href="https://nestjs-note-app.altisjs.com/">https://nestjs-note-app.altisjs.com/</a>
+- Live website: <a href="https://nestjs-note-app.altisjs.com/">https://nestjs-note-app.altisjs.com/</a>
+- API endpoint: <a href="https://api.nestjs-note-app.altisjs.com/">https://api.nestjs-note-app.altisjs.com/</a>
 
 ## Installation
 
